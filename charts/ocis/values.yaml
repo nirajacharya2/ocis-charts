@@ -300,7 +300,7 @@ deploymentStrategy:
 # required: true
 # @schema
 # -- Domain where oCIS is reachable for the outside world
-externalDomain:
+externalDomain: ocis.kube.test
 
 # Insecure options.
 # These are useful for some limited environments like CI or on a test cluster.
@@ -311,21 +311,21 @@ insecure:
   # @schema
   # -- Disables SSL certificate checking for connections to the openID connect identity provider.
   # Not recommended for production installations.
-  oidcIdpInsecure: false
+  oidcIdpInsecure: true
   # @schema
   # type: boolean
   # required: true
   # @schema
   # -- Disables SSL certificate checking for connections to the oCIS http apis.
   # Not recommended for production installations.
-  ocisHttpApiInsecure: false
+  ocisHttpApiInsecure: true
   # @schema
   # type: boolean
   # required: true
   # @schema
   # -- Disables SSL certificate checking for connections to all OCM instances
   # Not recommended for production installations.
-  ocmInsecure: false
+  ocmInsecure: true
 
 cache:
   # @schema
@@ -1552,19 +1552,21 @@ ingress:
   # required: true
   # @schema
   # -- Enables the Ingress.
-  enabled: false
+  enabled: true
   # @schema
   # type: [string, null]
   # required: false
   # @schema
   # -- Ingress class to use.
   # Uses the default ingress class if not set.
-  ingressClassName:
+  ingressClassName: nginx
   # @schema
   # $ref: schema/templates.json#/annotationsTemplate
   # @schema
   # -- Ingress annotations.
-  annotations: {}
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+    cert-manager.io/issuer: 'ocis-certificate-issuer'
   # @schema
   # $ref: schema/templates.json#/labelsTemplate
   # @schema
@@ -1586,10 +1588,10 @@ ingress:
   #         type: string
   # @schema
   # -- Ingress TLS configuration.
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - ocis.owncloud.test
+  tls:
+    - hosts:
+        - ocis.kube.test
+      secretName: ocis-tls-certificate
 
 # References to ConfigMaps.
 # The ConfigMaps need to be manually created.
@@ -1978,23 +1980,22 @@ priorityClassName:
 # @schema
 # Include arbitrary resources, eg. config maps or a cert-manager issuer (see example below)
 # -- Extra resources to be included.
-extraResources: []
-#  - |
-#    apiVersion: cert-manager.io/v1alpha2
-#    kind: Issuer
-#    metadata:
-#      name: ocis-certificate-issuer
-#      namespace: ocis
-#    spec:
-#      acme:
-#        server: https://acme-v02.api.letsencrypt.org/directory
-#        email: test@example.com
-#        privateKeySecretRef:
-#          name: ocis-certificate-issuer
-#        solvers:
-#        - http01:
-#            ingress:
-#              class: nginx
+extraResources:
+  - |
+    apiVersion: cert-manager.io/v1
+    kind: Issuer
+    metadata:
+      name: ocis-certificate-issuer
+    spec:
+      acme:
+        server: https://acme-v02.api.letsencrypt.org/directory
+        email: test@example.test
+        privateKeySecretRef:
+          name: ocis-certificate-issuer
+        solvers:
+        - http01:
+            ingress:
+              class: nginx
 
 # per-service configuration.
 services:

@@ -47,6 +47,9 @@ spec:
             - name: PROXY_DEBUG_PPROF
               value: {{ .Values.debug.profiling | quote }}
 
+            - name: PROXY_ENABLE_BASIC_AUTH
+              value: "true"
+
             - name: PROXY_HTTP_ADDR
               value: 0.0.0.0:9200
             - name: PROXY_DEBUG_ADDR
