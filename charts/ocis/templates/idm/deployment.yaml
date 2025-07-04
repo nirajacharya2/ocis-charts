@@ -75,10 +75,7 @@ spec:
               value: "https://{{ .Values.externalDomain }}"
 
             - name: IDM_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "secrets.adminUser" . }}
-                  key: password
+              value: "admin"
             - name: IDM_ADMIN_USER_ID
               valueFrom:
                 secretKeyRef:
