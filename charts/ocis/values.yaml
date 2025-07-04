@@ -300,7 +300,7 @@ deploymentStrategy:
 # required: true
 # @schema
 # -- Domain where oCIS is reachable for the outside world
-externalDomain: ocis.kube.test
+externalDomain: "ocis"
 
 # Insecure options.
 # These are useful for some limited environments like CI or on a test cluster.
@@ -1590,8 +1590,10 @@ ingress:
   # -- Ingress TLS configuration.
   tls:
     - hosts:
-        - ocis.kube.test
-      secretName: ocis-tls-certificate
+        - ocis
+      secretName: chart-example-tls
+  #    hosts:
+  #      - ocis.owncloud.test
 
 # References to ConfigMaps.
 # The ConfigMaps need to be manually created.
@@ -1980,22 +1982,6 @@ priorityClassName:
 # @schema
 # Include arbitrary resources, eg. config maps or a cert-manager issuer (see example below)
 # -- Extra resources to be included.
-extraResources:
-  - |
-    apiVersion: cert-manager.io/v1
-    kind: Issuer
-    metadata:
-      name: ocis-certificate-issuer
-    spec:
-      acme:
-        server: https://acme-v02.api.letsencrypt.org/directory
-        email: test@example.test
-        privateKeySecretRef:
-          name: ocis-certificate-issuer
-        solvers:
-        - http01:
-            ingress:
-              class: nginx
 
 # per-service configuration.
 services:
