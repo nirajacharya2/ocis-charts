@@ -7,9 +7,10 @@ ingress:
   tls:
     - secretName: chart-example-tls
       hosts:
-        - ocis.owncloud.test
+        - ocis
 
-externalDomain: ocis.owncloud.test
+externalDomain: ocis
+extraResources: []
 
 logging:
   level: debug
